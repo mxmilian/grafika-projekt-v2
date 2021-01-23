@@ -28,14 +28,14 @@
   <ItemGroup>
     <None Include="shaders\shader_color.frag" />
     <None Include="shaders\shader_color.vert" />
+    <None Include="shaders\shader_sun.frag" />
+    <None Include="shaders\shader_sun.vert" />
     <None Include="shaders\shader_tex.frag" />
     <None Include="shaders\shader_tex.vert" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="textures\ship.png" />
     <Image Include="textures\sun.png" />
-    <Image Include="textures\test2.png" />
-    <Image Include="textures\test3.png" />
-    <Image Include="textures\test4.png" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{1B448102-E76C-4347-BDC7-40D02A567DB6}</ProjectGuid>

@@ -1,29 +1,25 @@
 #version 430 core
 
-uniform vec3 objectColor;
-//uniform vec3 lightDir;
-uniform vec3 cameraPos;
+uniform sampler2D textureSampler;
 uniform vec3 lightPos;
+uniform vec3 cameraPos;
 
+in vec2 interpTexCoord;
 in vec3 interpNormal;
 in vec3 fragPos;
 
 void main()
 {
-	vec3 lightDir = normalize(fragPos - lightPos);
-	vec3 V = normalize(cameraPos - fragPos);
-	vec3 N = normalize(interpNormal);
-
-	vec3 R = reflect(lightDir, N);
-
-	float diffuse = max(0, dot(N, lightDir));
+	vec3 lightDir = normalize(lightPos-fragPos);
+	vec3 V = normalize(cameraPos-fragPos);
+	vec3 normal = normalize(interpNormal);
+	vec3 R = reflect(-lightDir,normal);
 	
-	float specular_pow = 100;
-	float specular = pow(max(0, dot(R, V)), specular_pow);
+	vec3 color = texture2D(textureSampler, interpTexCoord).rgb;
 
-	vec3 lightColor = vec3(1);
-	vec3 shadedColor = objectColor * diffuse + lightColor * specular;
-	
-	float ambient = 0.2;
-	gl_FragColor = vec4(objectColor * shadedColor + vec3(1.0) * specular, 1.0);
+	float specular = pow(max(0,dot(R,V)),10);
+	float diffuse = max(0,dot(normal,lightDir));
+	float ambient = 0.1;
+	gl_FragColor.rgb = mix(color, color * diffuse + vec3(1) * specular, 1.0 - ambient);
+	gl_FragColor.a = 1.0;
 }

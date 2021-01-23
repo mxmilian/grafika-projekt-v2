@@ -67,18 +67,18 @@
     <None Include="shaders\shader_tex.vert">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="shaders\shader_sun.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="shaders\shader_sun.vert">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="textures\sun.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="textures\test2.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="textures\test3.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="textures\test4.png">
+    <Image Include="textures\ship.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

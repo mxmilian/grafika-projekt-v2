@@ -6,7 +6,7 @@ layout(location = 2) in vec3 vertexNormal;
 layout(location = 3) in vec3 vertexTangent;
 layout(location = 4) in vec3 vertexBitangent;
 
-uniform mat4 modelViewProjectionMatrix;
+uniform mat4 transformation;
 uniform mat4 modelMatrix;
 
 uniform vec3 lightDir;
@@ -26,7 +26,7 @@ void main()
 	
 	mat3 TBN = transpose(mat3(tangent, bitangent, normal));
 
-	gl_Position = modelViewProjectionMatrix * vec4(vertexPosition, 1.0);
+	gl_Position = transformation * vec4(vertexPosition, 1.0);
 
 	vec3 viewDir = normalize(cameraPos - vertPos);
 	lightDirTS = TBN * lightDir;
