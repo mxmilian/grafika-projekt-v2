@@ -81,5 +81,35 @@
     <Image Include="textures\ship.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="textures\planet1.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="textures\planet1_norm.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="textures\planet2.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="textures\planet2_norm.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="textures\planet4.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="textures\planet4_norm.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="textures\planet3.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="textures\planet3_norm.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="textures\planet5_norm.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="textures\planet5.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

@@ -18,6 +18,7 @@ out vec3 viewDirTS;
 
 void main()
 {
+
 	vec3 vertPos = (modelMatrix * vec4(vertexPosition, 1.0)).xyz;
 	
 	vec3 normal = (modelMatrix * vec4(vertexNormal, 0.0)).xyz;

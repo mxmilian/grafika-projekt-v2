@@ -6,16 +6,16 @@ layout(location = 2) in vec3 vertexNormal;
 
 uniform mat4 transformation;
 uniform mat4 modelMatrix;
-out vec3 interpNormal;
-out vec3 fragPos;
 
+out vec3 interpNormal;
+out vec3 vertPos;
 out vec2 interpTexCoord;
 
 void main()
 {
 	gl_Position = transformation * vec4(vertexPosition, 1.0);
 	interpNormal = (modelMatrix * vec4(vertexNormal,0)).xyz;
-	fragPos = (modelMatrix * vec4(vertexPosition,1)).xyz;
+	vertPos = (modelMatrix * vec4(vertexPosition,1)).xyz;
 
 	interpTexCoord = vertexTexCoord;
 }
