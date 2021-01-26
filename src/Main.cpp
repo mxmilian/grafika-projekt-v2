@@ -19,34 +19,30 @@
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
-GLuint programColor, programTexture, programSun, programSkyBox;
-
-GLuint cubemapTexture;
+GLuint programColor, programNormalMapping, programSun, programSkyBox, cubemapTexture;
 
 Core::Shader_Loader shaderLoader;
 
 obj::Model shipModel;
 obj::Model sphereModel;
 
-glm::vec3 randomPosition[10];
-glm::vec3 cameraPos = glm::vec3(0, 0, 25);
+glm::vec3 cameraPos = glm::vec3(40, 0, 25);
 glm::vec3 cameraDir;	// Wektor "do przodu" kamery
 glm::vec3 cameraSide;	// Wektor "w bok" kamery
 
-float cameraAngle = 0;
 float differenceX = 0;
 float prevX = 0;
 float differenceY = 0;
 float prevY = 0;
 
 glm::mat4 cameraMatrix, perspectiveMatrix;
-glm::vec3 lightDir = glm::normalize(glm::vec3(0,1,0));
 glm::quat rotation = glm::quat(1, 0, 0, 0);
-
 glm::vec3 lightPos = glm::vec3(0, 0, 0);
 
-GLuint textureAsteroid, textureShip, textureSun;
-GLuint normalTextureAsteroid;
+
+GLuint textureShip, textureSun, texturePlanet1, texturePlanet2, texturePlanet3, texturePlanet4, texturePlanet5;
+GLuint normalTextureP1, normalTextureP2, normalTextureP3, normalTextureP4, normalTextureP5;
+
 void keyboard(unsigned char key, int x, int y)
 {
 	
@@ -65,10 +61,10 @@ void keyboard(unsigned char key, int x, int y)
 
 void mouse(int x, int y)
 {
-	differenceX = (x - prevX) * 0.01;		// pomno¿one przez 0.01, by kamera za szybko sie nie obracala
+	differenceX = (x - prevX) * 0.05;
 	prevX = x;
 
-	differenceY = (y - prevY) * 0.01;
+	differenceY = (y - prevY) * 0.05;
 	prevY = y;
 }
 
@@ -83,44 +79,26 @@ glm::mat4 createCameraMatrix()
 	glm::quat rotationChange = glm::normalize(quatX * quatY);
 	rotation = rotationChange * rotation;
 
-	cameraDir= glm::inverse(rotation) * glm::vec3(0, 0, -1);
+	cameraDir = glm::inverse(rotation) * glm::vec3(0, 0, -1);
 	cameraSide = glm::inverse(rotation) * glm::vec3(1, 0, 0);
 
 	return Core::createViewMatrixQuat(cameraPos,rotation);
 }
 
 
-void drawObjectTexture(GLuint program, obj::Model* model, glm::mat4 modelMatrix, GLuint textureId)
+void drawObject(GLuint program, obj::Model * model, glm::mat4 modelMatrix, GLuint textureId, GLuint normalmapId)
 {
-	glUseProgram(program);
-	glUniform3f(glGetUniformLocation(program, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
-	glUniform3f(glGetUniformLocation(program, "cameraPos"), cameraPos.x, cameraPos.y, cameraPos.z);
-	Core::SetActiveTexture(textureId, "textureSampler", program, 1);
+    glUseProgram(program);
+    glUniform3f(glGetUniformLocation(program, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
+    glUniform3f(glGetUniformLocation(program, "cameraPos"), cameraPos.x, cameraPos.y, cameraPos.z);
+    Core::SetActiveTexture(textureId, "textureSampler", program, 0);
+    Core::SetActiveTexture(normalmapId, "normalSampler", program, 1);
 
-	glm::mat4 transformation = perspectiveMatrix * cameraMatrix * modelMatrix;
-	glUniformMatrix4fv(glGetUniformLocation(program, "transformation"), 1, GL_FALSE, (float*)&transformation);
-	glUniformMatrix4fv(glGetUniformLocation(program, "modelMatrix"), 1, GL_FALSE, (float*)&modelMatrix);
-
-	Core::DrawModel(model);
-	glUseProgram(0);
-}
-
-void drawObjectNormalMapping(GLuint program, obj::Model * model, glm::mat4 modelMatrix, GLuint textureId, GLuint normalmapId)
-{
-	glUseProgram(program);
-	glUniform3f(glGetUniformLocation(program, "lightDir"), lightDir.x, lightDir.y, lightDir.z);
-	glUniform3f(glGetUniformLocation(program, "cameraPos"), cameraPos.x, cameraPos.y, cameraPos.z);
-	Core::SetActiveTexture(textureId, "textureSampler", program, 0);
-	Core::SetActiveTexture(normalmapId, "normalSampler", program, 1);
-
-	glm::mat4 transformation = perspectiveMatrix * cameraMatrix * modelMatrix;
-	glUniformMatrix4fv(glGetUniformLocation(program, "transformation"), 1, GL_FALSE, (float*)&transformation);
-	glUniformMatrix4fv(glGetUniformLocation(program, "modelMatrix"), 1, GL_FALSE, (float*)&modelMatrix);
-
-	Core::DrawModel(model);
-
-	glUseProgram(0);
-}
+    glm::mat4 transformation = perspectiveMatrix * cameraMatrix * modelMatrix;
+    glUniformMatrix4fv(glGetUniformLocation(program, "modelMatrix"), 1, GL_FALSE, (float*)&modelMatrix);    
+    glUniformMatrix4fv(glGetUniformLocation(program, "transformation"), 1, GL_FALSE, (float*)&transformation);
+    Core::DrawModel(model);
+ }   
 
 void drawObjectSkyBox(GLuint program, GLuint textureId) {
 
@@ -140,6 +118,7 @@ void renderScene()
 {
 	cameraMatrix = createCameraMatrix();
 	perspectiveMatrix = Core::createPerspectiveMatrix();
+	float time = glutGet(GLUT_ELAPSED_TIME) / 1000.f;
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glClearColor(0.0f, 0.1f, 0.3f, 1.0f);
@@ -150,17 +129,23 @@ void renderScene()
 	glm::mat4 shipModelMatrix = glm::translate(cameraPos + cameraDir * 0.5f) * glm::mat4_cast(glm::inverse(rotation)) * shipInitialTransformation;
 
 	// statek
-	drawObjectTexture(programColor, &shipModel, shipModelMatrix, textureShip);
+	drawObject(programColor, &shipModel, shipModelMatrix, textureShip, 0);
 	// TODO: statek ma byc zrodlem swiatla
 
-	// s³oñce
-	drawObjectTexture(programSun, &sphereModel, glm::translate(glm::vec3(0, 0, 0)) * glm::scale(glm::vec3(15.0)), textureSun);
+	// sÂ³oÃ±ce
+	drawObject(programSun, &sphereModel, glm::translate(lightPos) * glm::scale(glm::vec3(20)), textureSun, 0);
 
-	for (int i = 0; i < 10; i++)
-	{
-		drawObjectNormalMapping(programColor, &sphereModel, glm::translate(randomPosition[i]), textureAsteroid, normalTextureAsteroid);
-		// TODO: zamiast randomowego ustawiania planet, planety pojawiaja sie w okresloncyh miejscach (+ jezeli sie uda to maja sie obracac), 
-	};
+	// 1 planeta
+	drawObject(programNormalMapping, &sphereModel, glm::translate(glm::vec3(30,0,0)) * scale(glm::vec3(3)), texturePlanet1, normalTextureP1);
+	// 2 planeta
+	drawObject(programNormalMapping, &sphereModel, glm::translate(glm::vec3(50, 0, 0)) * scale(glm::vec3(5)), texturePlanet2, normalTextureP2);
+	// 3 planeta
+	drawObject(programNormalMapping, &sphereModel, glm::translate(glm::vec3(80, 0, 0)) * scale(glm::vec3(5)), texturePlanet3, normalTextureP3);
+	// ksiezyce 3 planety
+
+	//  glm::eulerAngleY(time / 2)		TODO: ksiezyce sie obracaja wokol 3 planety + wszystkie planety kraza wokol slonca
+	drawObject(programNormalMapping, &sphereModel, glm::translate(glm::vec3(70, 0, 0)) * scale(glm::vec3(1.5)), texturePlanet4, normalTextureP4);
+	drawObject(programNormalMapping, &sphereModel, glm::translate(glm::vec3(70, 0, 10)) * scale(glm::vec3(1.5)), texturePlanet5, normalTextureP5);
 
 	
 	drawObjectSkyBox(programSkyBox, cubemapTexture);
@@ -174,13 +159,8 @@ void init()
 	srand(time(0));
 	glEnable(GL_DEPTH_TEST);
 
-	for (int i = 0; i < 10; i++)
-	{
-		randomPosition[i] = glm::ballRand(20.0);
-	}
-
-	programColor = shaderLoader.CreateProgram("shaders/shader_color.vert", "shaders/shader_color.frag");	// <-- test, swiatlo sie odbija, normal mapping nie dziala, tekstury dzialaja
-	programTexture = shaderLoader.CreateProgram("shaders/shader_tex.vert", "shaders/shader_tex.frag");		// <--  normal mapping i tekstury dzialaja, zle odbija swiatlo
+	programColor = shaderLoader.CreateProgram("shaders/shader_color.vert", "shaders/shader_color.frag");				// <--testowy shader do statku (statek ma byc zrodelm swiatla)
+	programNormalMapping = shaderLoader.CreateProgram("shaders/shader_mapping.vert", "shaders/shader_mapping.frag");	// Mapping juz dziala poprawnie
 	programSun = shaderLoader.CreateProgram("shaders/shader_sun.vert", "shaders/shader_sun.frag");
 	programSkyBox = shaderLoader.CreateProgram("shaders/shader_skybox.vert", "shaders/shader_skybox.frag");
 
@@ -188,12 +168,21 @@ void init()
 	shipModel = obj::loadModelFromFile("models/spaceship.obj");
 
 	textureShip = Core::LoadTexture("textures/ship.png");
-	textureAsteroid = Core::LoadTexture("textures/asteroid.png");
-	normalTextureAsteroid = Core::LoadTexture("textures/asteroid_normals.png");
 	textureSun = Core::LoadTexture("textures/sun.png");
-	
 
-	std::vector<std::string> faces;
+	texturePlanet1 = Core::LoadTexture("textures/planet1.png");
+	texturePlanet2 = Core::LoadTexture("textures/planet2.png");
+	texturePlanet3 = Core::LoadTexture("textures/planet3.png");
+	texturePlanet4 = Core::LoadTexture("textures/planet4.png");
+	texturePlanet5 = Core::LoadTexture("textures/planet5.png");
+
+	normalTextureP1 = Core::LoadTexture("textures/planet1_norm.png");
+	normalTextureP2 = Core::LoadTexture("textures/planet2_norm.png");
+	normalTextureP3 = Core::LoadTexture("textures/planet3_norm.png");
+	normalTextureP4 = Core::LoadTexture("textures/planet4_norm.png");
+	normalTextureP5 = Core::LoadTexture("textures/planet5_norm.png");
+  
+  std::vector<std::string> faces;
 	faces.push_back("textures/skybox/right.jpg");
 	faces.push_back("textures/skybox/left.jpg");
 	faces.push_back("textures/skybox/top.jpg");
@@ -211,7 +200,7 @@ void init()
 void shutdown()
 {
 	shaderLoader.DeleteProgram(programColor);
-	shaderLoader.DeleteProgram(programTexture);
+	shaderLoader.DeleteProgram(programNormalMapping);
 	shaderLoader.DeleteProgram(programSun);
 }
 
@@ -226,7 +215,7 @@ int main(int argc, char ** argv)
 	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowPosition(100, 100);
 	glutInitWindowSize(600, 600);
-	glutCreateWindow("OpenGL Pierwszy Program");
+	glutCreateWindow("OpenGL Project");
 	glewInit();
 
 	init();

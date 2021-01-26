@@ -6,9 +6,9 @@ layout(location = 2) in vec3 vertexNormal;
 
 uniform mat4 transformation;
 uniform mat4 modelMatrix;
+
 out vec3 interpNormal;
 out vec3 fragPos;
-
 out vec2 interpTexCoord;
 
 void main()

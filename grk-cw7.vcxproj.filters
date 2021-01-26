@@ -67,16 +67,16 @@
     <None Include="shaders\shader_color.vert">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="shaders\shader_tex.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="shaders\shader_tex.vert">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="shaders\shader_sun.frag">
       <Filter>Shaders</Filter>
     </None>
     <None Include="shaders\shader_sun.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="shaders\shader_mapping.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="shaders\shader_mapping.frag">
       <Filter>Shaders</Filter>
     </None>
     <None Include="shaders\shader_skybox.frag">
@@ -91,6 +91,36 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="textures\ship.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="textures\planet4.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="textures\planet4_norm.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="textures\planet3.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="textures\planet3_norm.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="textures\planet5_norm.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="textures\planet5.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="textures\planet1.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="textures\planet1_norm.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="textures\planet2.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="textures\planet2_norm.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
