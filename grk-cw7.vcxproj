@@ -30,10 +30,20 @@
     <None Include="shaders\shader_color.vert" />
     <None Include="shaders\shader_sun.frag" />
     <None Include="shaders\shader_sun.vert" />
-    <None Include="shaders\shader_tex.frag" />
-    <None Include="shaders\shader_tex.vert" />
+    <None Include="shaders\shader_mapping.frag" />
+    <None Include="shaders\shader_mapping.vert" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="textures\planet1.png" />
+    <Image Include="textures\planet1_norm.png" />
+    <Image Include="textures\planet2.png" />
+    <Image Include="textures\planet2_norm.png" />
+    <Image Include="textures\planet5.png" />
+    <Image Include="textures\planet5_norm.png" />
+    <Image Include="textures\planet4_norm.png" />
+    <Image Include="textures\planet4.png" />
+    <Image Include="textures\planet3.png" />
+    <Image Include="textures\planet3_norm.png" />
     <Image Include="textures\ship.png" />
     <Image Include="textures\sun.png" />
   </ItemGroup>

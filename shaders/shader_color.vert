@@ -6,10 +6,10 @@ layout(location = 2) in vec3 vertexNormal;
 
 uniform mat4 transformation;
 uniform mat4 modelMatrix;
+
 out vec3 interpNormal;
 out vec3 fragPos;
-
-out vec2 interpTexCoord;
+out vec2 vertexCoord;
 
 void main()
 {
@@ -17,5 +17,5 @@ void main()
 	interpNormal = (modelMatrix * vec4(vertexNormal,0)).xyz;
 	fragPos = (modelMatrix * vec4(vertexPosition,1)).xyz;
 
-	interpTexCoord = vertexTexCoord;
+	vertexCoord = -vertexTexCoord;
 }
