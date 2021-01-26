@@ -2,10 +2,14 @@
 
 #include "glew.h"
 #include "freeglut.h"
+#include "vector"
+#include <string>
 
 namespace Core
 {
 	GLuint LoadTexture(const char * filepath);
+
+	GLuint LoadCubeMap(std::vector<std::string> faces);
 
 	// textureID - identyfikator tekstury otrzymany z funkcji LoadTexture
 	// shaderVariableName - nazwa zmiennej typu 'sampler2D' w shaderze, z ktora ma zostac powiazana tekstura

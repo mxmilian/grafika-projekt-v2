@@ -5,13 +5,23 @@
 #include <iostream>
 #include <cmath>
 #include <vector>
-
+#include <glm.hpp>
+#include "gtc/type_ptr.hpp"
 #include "Shader_Loader.h"
 #include "Render_Utils.h"
 #include "Camera.h"
 #include "Texture.h"
+#include "SkyBox.cpp"
+#include <vector>
+#include <string>
 
-GLuint programColor, programTexture, programSun;
+// settings
+const unsigned int SCR_WIDTH = 800;
+const unsigned int SCR_HEIGHT = 600;
+
+GLuint programColor, programTexture, programSun, programSkyBox;
+
+GLuint cubemapTexture;
 
 Core::Shader_Loader shaderLoader;
 
@@ -95,7 +105,6 @@ void drawObjectTexture(GLuint program, obj::Model* model, glm::mat4 modelMatrix,
 	glUseProgram(0);
 }
 
-
 void drawObjectNormalMapping(GLuint program, obj::Model * model, glm::mat4 modelMatrix, GLuint textureId, GLuint normalmapId)
 {
 	glUseProgram(program);
@@ -113,6 +122,19 @@ void drawObjectNormalMapping(GLuint program, obj::Model * model, glm::mat4 model
 	glUseProgram(0);
 }
 
+void drawObjectSkyBox(GLuint program, GLuint textureId) {
+
+	glUseProgram(program);
+	
+
+	glm::mat4 view = glm::mat4(glm::mat3(cameraMatrix));
+	glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_FALSE, (float*)&view);
+	glUniformMatrix4fv(glGetUniformLocation(program, "projection"), 1, GL_FALSE, (float*)&projection);
+	Core::DrawSkyBox(cubemapTexture);
+	glUseProgram(0);
+}
+
 
 void renderScene()
 {
@@ -121,6 +143,8 @@ void renderScene()
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glClearColor(0.0f, 0.1f, 0.3f, 1.0f);
+
+	
 
 	glm::mat4 shipInitialTransformation = glm::translate(glm::vec3(-2.5,-3,-5)) * glm::rotate(glm::radians(90.0f), glm::vec3(0,1,0)) * glm::scale(glm::vec3(0.15f));	
 	glm::mat4 shipModelMatrix = glm::translate(cameraPos + cameraDir * 0.5f) * glm::mat4_cast(glm::inverse(rotation)) * shipInitialTransformation;
@@ -137,6 +161,9 @@ void renderScene()
 		drawObjectNormalMapping(programColor, &sphereModel, glm::translate(randomPosition[i]), textureAsteroid, normalTextureAsteroid);
 		// TODO: zamiast randomowego ustawiania planet, planety pojawiaja sie w okresloncyh miejscach (+ jezeli sie uda to maja sie obracac), 
 	};
+
+	
+	drawObjectSkyBox(programSkyBox, cubemapTexture);
 
 	glutSwapBuffers();
 }
@@ -155,6 +182,7 @@ void init()
 	programColor = shaderLoader.CreateProgram("shaders/shader_color.vert", "shaders/shader_color.frag");	// <-- test, swiatlo sie odbija, normal mapping nie dziala, tekstury dzialaja
 	programTexture = shaderLoader.CreateProgram("shaders/shader_tex.vert", "shaders/shader_tex.frag");		// <--  normal mapping i tekstury dzialaja, zle odbija swiatlo
 	programSun = shaderLoader.CreateProgram("shaders/shader_sun.vert", "shaders/shader_sun.frag");
+	programSkyBox = shaderLoader.CreateProgram("shaders/shader_skybox.vert", "shaders/shader_skybox.frag");
 
 	sphereModel = obj::loadModelFromFile("models/sphere.obj");
 	shipModel = obj::loadModelFromFile("models/spaceship.obj");
@@ -163,6 +191,21 @@ void init()
 	textureAsteroid = Core::LoadTexture("textures/asteroid.png");
 	normalTextureAsteroid = Core::LoadTexture("textures/asteroid_normals.png");
 	textureSun = Core::LoadTexture("textures/sun.png");
+	
+
+	std::vector<std::string> faces;
+	faces.push_back("textures/skybox/right.jpg");
+	faces.push_back("textures/skybox/left.jpg");
+	faces.push_back("textures/skybox/top.jpg");
+	faces.push_back("textures/skybox/bottom.jpg");
+	faces.push_back("textures/skybox/front.jpg");
+	faces.push_back("textures/skybox/back.jpg");
+	for (int i = 0; i < faces.size(); i++) {
+		std::cout << faces[i] << std::endl;
+	}
+
+	cubemapTexture = Core::LoadCubeMap(faces);
+
 }
 
 void shutdown()
