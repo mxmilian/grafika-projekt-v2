@@ -8,14 +8,14 @@ uniform mat4 transformation;
 uniform mat4 modelMatrix;
 
 out vec3 interpNormal;
-out vec3 vertPos;
-out vec2 interpTexCoord;
+out vec3 fragPos;
+out vec2 vertexCoord;
 
 void main()
 {
 	gl_Position = transformation * vec4(vertexPosition, 1.0);
 	interpNormal = (modelMatrix * vec4(vertexNormal,0)).xyz;
-	vertPos = (modelMatrix * vec4(vertexPosition,1)).xyz;
+	fragPos = (modelMatrix * vec4(vertexPosition,1)).xyz;
 
-	interpTexCoord = vertexTexCoord;
+	vertexCoord = -vertexTexCoord;
 }

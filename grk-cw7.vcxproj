@@ -30,8 +30,8 @@
     <None Include="shaders\shader_color.vert" />
     <None Include="shaders\shader_sun.frag" />
     <None Include="shaders\shader_sun.vert" />
-    <None Include="shaders\shader_tex.frag" />
-    <None Include="shaders\shader_tex.vert" />
+    <None Include="shaders\shader_mapping.frag" />
+    <None Include="shaders\shader_mapping.vert" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="textures\planet1.png" />

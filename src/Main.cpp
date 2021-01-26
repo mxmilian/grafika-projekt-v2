@@ -11,7 +11,7 @@
 #include "Camera.h"
 #include "Texture.h"
 
-GLuint programColor, programTexture, programSun;
+GLuint programColor, programNormalMapping, programSun;
 
 Core::Shader_Loader shaderLoader;
 
@@ -28,10 +28,9 @@ float differenceY = 0;
 float prevY = 0;
 
 glm::mat4 cameraMatrix, perspectiveMatrix;
-glm::vec3 lightDir = glm::normalize(glm::vec3(0,1,0));
 glm::quat rotation = glm::quat(1, 0, 0, 0);
-
 glm::vec3 lightPos = glm::vec3(0, 0, 0);
+
 
 GLuint textureShip, textureSun, texturePlanet1, texturePlanet2, texturePlanet3, texturePlanet4, texturePlanet5;
 GLuint normalTextureP1, normalTextureP2, normalTextureP3, normalTextureP4, normalTextureP5;
@@ -82,7 +81,6 @@ glm::mat4 createCameraMatrix()
 void drawObject(GLuint program, obj::Model * model, glm::mat4 modelMatrix, GLuint textureId, GLuint normalmapId)
 {
 	glUseProgram(program);
-	glUniform3f(glGetUniformLocation(program, "lightDir"), lightDir.x, lightDir.y, lightDir.z);
 	glUniform3f(glGetUniformLocation(program, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
 	glUniform3f(glGetUniformLocation(program, "cameraPos"), cameraPos.x, cameraPos.y, cameraPos.z);
 	Core::SetActiveTexture(textureId, "textureSampler", program, 0);
@@ -115,17 +113,18 @@ void renderScene()
 
 	// s³oñce
 	drawObject(programSun, &sphereModel, glm::translate(lightPos) * glm::scale(glm::vec3(20)), textureSun, 0);
+
 	// 1 planeta
-	drawObject(programTexture, &sphereModel, glm::translate(glm::vec3(30,0,0)) * scale(glm::vec3(3)), texturePlanet1, normalTextureP1);
+	drawObject(programNormalMapping, &sphereModel, glm::translate(glm::vec3(30,0,0)) * scale(glm::vec3(3)), texturePlanet1, normalTextureP1);
 	// 2 planeta
-	drawObject(programTexture, &sphereModel, glm::translate(glm::vec3(50, 0, 0)) * scale(glm::vec3(5)), texturePlanet2, normalTextureP2);
+	drawObject(programNormalMapping, &sphereModel, glm::translate(glm::vec3(50, 0, 0)) * scale(glm::vec3(5)), texturePlanet2, normalTextureP2);
 	// 3 planeta
-	drawObject(programTexture, &sphereModel, glm::translate(glm::vec3(80, 0, 0)) * scale(glm::vec3(5)), texturePlanet3, normalTextureP3);
+	drawObject(programNormalMapping, &sphereModel, glm::translate(glm::vec3(80, 0, 0)) * scale(glm::vec3(5)), texturePlanet3, normalTextureP3);
 	// ksiezyce 3 planety
 
-	//  glm::eulerAngleY(time / 2)  <-- obraca sie dookola slonca
-	drawObject(programTexture, &sphereModel, glm::translate(glm::vec3(70, 0, 0)) * scale(glm::vec3(1.5)), texturePlanet4, normalTextureP4);
-	drawObject(programTexture, &sphereModel, glm::translate(glm::vec3(70, 0, 10)) * scale(glm::vec3(1.5)), texturePlanet5, normalTextureP5);
+	//  glm::eulerAngleY(time / 2)		TODO: ksiezyce sie obracaja wokol 3 planety + wszystkie planety kraza wokol slonca
+	drawObject(programNormalMapping, &sphereModel, glm::translate(glm::vec3(70, 0, 0)) * scale(glm::vec3(1.5)), texturePlanet4, normalTextureP4);
+	drawObject(programNormalMapping, &sphereModel, glm::translate(glm::vec3(70, 0, 10)) * scale(glm::vec3(1.5)), texturePlanet5, normalTextureP5);
 
 	glutSwapBuffers();
 }
@@ -136,8 +135,8 @@ void init()
 	srand(time(0));
 	glEnable(GL_DEPTH_TEST);
 
-	programColor = shaderLoader.CreateProgram("shaders/shader_color.vert", "shaders/shader_color.frag");	// <-- swiatlo sie odbija, tekstury dzialaja, normal mapping nie dziala 
-	programTexture = shaderLoader.CreateProgram("shaders/shader_tex.vert", "shaders/shader_tex.frag");		// <--  normal mapping i tekstury dzialaja, zle odbija swiatlo
+	programColor = shaderLoader.CreateProgram("shaders/shader_color.vert", "shaders/shader_color.frag");				// <--testowy shader do statku (statek ma byc zrodelm swiatla)
+	programNormalMapping = shaderLoader.CreateProgram("shaders/shader_mapping.vert", "shaders/shader_mapping.frag");	// Mapping juz dziala poprawnie
 	programSun = shaderLoader.CreateProgram("shaders/shader_sun.vert", "shaders/shader_sun.frag");
 
 	sphereModel = obj::loadModelFromFile("models/sphere.obj");
@@ -162,7 +161,7 @@ void init()
 void shutdown()
 {
 	shaderLoader.DeleteProgram(programColor);
-	shaderLoader.DeleteProgram(programTexture);
+	shaderLoader.DeleteProgram(programNormalMapping);
 	shaderLoader.DeleteProgram(programSun);
 }
 

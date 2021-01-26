@@ -11,8 +11,8 @@ in vec3 fragPos;
 void main()
 {
 	vec3 normal = normalize(interpNormal);
-	vec3 V = normalize(cameraPos-fragPos);
-	float coef = max(0,dot(V,normal));
+	vec3 view = normalize(cameraPos-fragPos);
+	float coef = max(0,dot(view,normal));
 
 	vec3 color = texture2D(textureSampler, interpTexCoord).rgb;
 
