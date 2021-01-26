@@ -5,13 +5,21 @@
 #include <iostream>
 #include <cmath>
 #include <vector>
-
+#include <glm.hpp>
+#include "gtc/type_ptr.hpp"
 #include "Shader_Loader.h"
 #include "Render_Utils.h"
 #include "Camera.h"
 #include "Texture.h"
+#include "SkyBox.cpp"
+#include <vector>
+#include <string>
 
-GLuint programColor, programNormalMapping, programSun;
+// settings
+const unsigned int SCR_WIDTH = 800;
+const unsigned int SCR_HEIGHT = 600;
+
+GLuint programColor, programNormalMapping, programSun, programSkyBox, cubemapTexture;
 
 Core::Shader_Loader shaderLoader;
 
@@ -80,17 +88,28 @@ glm::mat4 createCameraMatrix()
 
 void drawObject(GLuint program, obj::Model * model, glm::mat4 modelMatrix, GLuint textureId, GLuint normalmapId)
 {
+    glUseProgram(program);
+    glUniform3f(glGetUniformLocation(program, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
+    glUniform3f(glGetUniformLocation(program, "cameraPos"), cameraPos.x, cameraPos.y, cameraPos.z);
+    Core::SetActiveTexture(textureId, "textureSampler", program, 0);
+    Core::SetActiveTexture(normalmapId, "normalSampler", program, 1);
+
+    glm::mat4 transformation = perspectiveMatrix * cameraMatrix * modelMatrix;
+    glUniformMatrix4fv(glGetUniformLocation(program, "modelMatrix"), 1, GL_FALSE, (float*)&modelMatrix);    
+    glUniformMatrix4fv(glGetUniformLocation(program, "transformation"), 1, GL_FALSE, (float*)&transformation);
+    Core::DrawModel(model);
+ }   
+
+void drawObjectSkyBox(GLuint program, GLuint textureId) {
+
 	glUseProgram(program);
-	glUniform3f(glGetUniformLocation(program, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
-	glUniform3f(glGetUniformLocation(program, "cameraPos"), cameraPos.x, cameraPos.y, cameraPos.z);
-	Core::SetActiveTexture(textureId, "textureSampler", program, 0);
-	Core::SetActiveTexture(normalmapId, "normalSampler", program, 1);
+	
 
-	glm::mat4 transformation = perspectiveMatrix * cameraMatrix * modelMatrix;
-	glUniformMatrix4fv(glGetUniformLocation(program, "modelMatrix"), 1, GL_FALSE, (float*)&modelMatrix);	
-	glUniformMatrix4fv(glGetUniformLocation(program, "transformation"), 1, GL_FALSE, (float*)&transformation);
-
-	Core::DrawModel(model);
+	glm::mat4 view = glm::mat4(glm::mat3(cameraMatrix));
+	glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_FALSE, (float*)&view);
+	glUniformMatrix4fv(glGetUniformLocation(program, "projection"), 1, GL_FALSE, (float*)&projection);
+	Core::DrawSkyBox(cubemapTexture);
 	glUseProgram(0);
 }
 
@@ -104,6 +123,8 @@ void renderScene()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glClearColor(0.0f, 0.1f, 0.3f, 1.0f);
 
+	
+
 	glm::mat4 shipInitialTransformation = glm::translate(glm::vec3(-2.5,-3,-5)) * glm::rotate(glm::radians(90.0f), glm::vec3(0,1,0)) * glm::scale(glm::vec3(0.15f));	
 	glm::mat4 shipModelMatrix = glm::translate(cameraPos + cameraDir * 0.5f) * glm::mat4_cast(glm::inverse(rotation)) * shipInitialTransformation;
 
@@ -111,7 +132,7 @@ void renderScene()
 	drawObject(programColor, &shipModel, shipModelMatrix, textureShip, 0);
 	// TODO: statek ma byc zrodlem swiatla
 
-	// s³oñce
+	// sÂ³oÃ±ce
 	drawObject(programSun, &sphereModel, glm::translate(lightPos) * glm::scale(glm::vec3(20)), textureSun, 0);
 
 	// 1 planeta
@@ -126,6 +147,9 @@ void renderScene()
 	drawObject(programNormalMapping, &sphereModel, glm::translate(glm::vec3(70, 0, 0)) * scale(glm::vec3(1.5)), texturePlanet4, normalTextureP4);
 	drawObject(programNormalMapping, &sphereModel, glm::translate(glm::vec3(70, 0, 10)) * scale(glm::vec3(1.5)), texturePlanet5, normalTextureP5);
 
+	
+	drawObjectSkyBox(programSkyBox, cubemapTexture);
+
 	glutSwapBuffers();
 }
 
@@ -138,6 +162,7 @@ void init()
 	programColor = shaderLoader.CreateProgram("shaders/shader_color.vert", "shaders/shader_color.frag");				// <--testowy shader do statku (statek ma byc zrodelm swiatla)
 	programNormalMapping = shaderLoader.CreateProgram("shaders/shader_mapping.vert", "shaders/shader_mapping.frag");	// Mapping juz dziala poprawnie
 	programSun = shaderLoader.CreateProgram("shaders/shader_sun.vert", "shaders/shader_sun.frag");
+	programSkyBox = shaderLoader.CreateProgram("shaders/shader_skybox.vert", "shaders/shader_skybox.frag");
 
 	sphereModel = obj::loadModelFromFile("models/sphere.obj");
 	shipModel = obj::loadModelFromFile("models/spaceship.obj");
@@ -156,6 +181,20 @@ void init()
 	normalTextureP3 = Core::LoadTexture("textures/planet3_norm.png");
 	normalTextureP4 = Core::LoadTexture("textures/planet4_norm.png");
 	normalTextureP5 = Core::LoadTexture("textures/planet5_norm.png");
+  
+  std::vector<std::string> faces;
+	faces.push_back("textures/skybox/right.jpg");
+	faces.push_back("textures/skybox/left.jpg");
+	faces.push_back("textures/skybox/top.jpg");
+	faces.push_back("textures/skybox/bottom.jpg");
+	faces.push_back("textures/skybox/front.jpg");
+	faces.push_back("textures/skybox/back.jpg");
+	for (int i = 0; i < faces.size(); i++) {
+		std::cout << faces[i] << std::endl;
+	}
+
+	cubemapTexture = Core::LoadCubeMap(faces);
+
 }
 
 void shutdown()

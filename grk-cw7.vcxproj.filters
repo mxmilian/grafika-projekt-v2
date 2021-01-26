@@ -36,6 +36,9 @@
     <ClCompile Include="src\Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\SkyBox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Camera.h">
@@ -51,6 +54,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Texture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\stb_image.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -71,6 +77,12 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="shaders\shader_mapping.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="shaders\shader_skybox.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="shaders\shader_skybox.vert">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
