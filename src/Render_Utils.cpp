@@ -4,6 +4,7 @@
 
 #include "glew.h"
 #include "freeglut.h"
+#include "SkyBox.cpp"
 
 void Core::DrawVertexArray(const float * vertexArray, int numVertices, int elementSize )
 {
@@ -44,4 +45,28 @@ void Core::DrawModel( obj::Model * model )
 
 	unsigned short * tmp = &model->faces["default"][0];
 	glDrawElements(GL_TRIANGLES, model->faces["default"].size(), GL_UNSIGNED_SHORT, tmp);
+}
+
+void Core::DrawSkyBox(GLuint textureID)
+{
+	unsigned int skyboxVAO, skyboxVBO;
+	glGenVertexArrays(1, &skyboxVAO);
+	glGenBuffers(1, &skyboxVBO);
+	glBindVertexArray(skyboxVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, skyboxVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), &skyboxVertices, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glDepthFunc(GL_LEQUAL);
+	glBindVertexArray(skyboxVAO);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+	glBindVertexArray(0);
+
+
+	glDeleteVertexArrays(1, &skyboxVAO);
+	glDeleteBuffers(1, &skyboxVAO);
+	glDepthFunc(GL_LESS);
+
 }

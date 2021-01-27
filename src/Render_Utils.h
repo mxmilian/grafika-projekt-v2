@@ -1,6 +1,7 @@
 #pragma once
 
 #include "objload.h"
+#include "glew.h"
 
 namespace Core
 {
@@ -51,4 +52,6 @@ namespace Core
 	void DrawVertexArray(const VertexData & data);
 
 	void DrawModel(obj::Model * model);
+
+	void DrawSkyBox(GLuint textureID);
 }
