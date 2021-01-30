@@ -1,2 +1,5 @@
 .vs
 Debug
+*.user
+dependencies/glm/out/
+Release/*
