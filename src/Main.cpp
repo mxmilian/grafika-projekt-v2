@@ -39,9 +39,8 @@ glm::mat4 cameraMatrix, perspectiveMatrix;
 glm::quat rotation = glm::quat(1, 0, 0, 0);
 glm::vec3 lightPos = glm::vec3(0, 0, 0);
 
-
-GLuint textureShip, textureSun, texturePlanet1, texturePlanet2, texturePlanet3, texturePlanet4, texturePlanet5;
-GLuint normalTextureP1, normalTextureP2, normalTextureP3, normalTextureP4, normalTextureP5;
+GLuint textureShip, textureSun, texturePlanet1, texturePlanet2, texturePlanet3, texturePlanet4, texturePlanet5, textureParticle, textureAsteroid;
+GLuint normalTextureP1, normalTextureP2, normalTextureP3, normalTextureP4, normalTextureP5, normalTextureAsteroid;
 
 void keyboard(unsigned char key, int x, int y)
 {
@@ -122,8 +121,7 @@ void renderScene()
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glClearColor(0.0f, 0.1f, 0.3f, 1.0f);
-
-	
+  
 
 	glm::mat4 shipInitialTransformation = glm::translate(glm::vec3(-2.5,-3,-5)) * glm::rotate(glm::radians(90.0f), glm::vec3(0,1,0)) * glm::scale(glm::vec3(0.15f));	
 	glm::mat4 shipModelMatrix = glm::translate(cameraPos + cameraDir * 0.5f) * glm::mat4_cast(glm::inverse(rotation)) * shipInitialTransformation;
@@ -150,6 +148,26 @@ void renderScene()
 	
 	drawObjectSkyBox(programSkyBox, cubemapTexture);
 
+
+	// prawe spaliny
+	for (int i = 10; i < 100; i++)
+	{
+		glm::mat4 particleTransformation = glm::translate(glm::vec3(0.7 + -0.1 * i / 90, -3, -4 * sin(time*i))) * glm::rotate(glm::radians(90.0f), glm::vec3(0, 1, 0)) * glm::scale(glm::vec3(0.15f));
+		glm::mat4 particleMatrix = glm::translate(cameraPos + cameraDir * 0.5f) * glm::mat4_cast(glm::inverse(rotation)) * particleTransformation;
+		drawObject(programColor, &sphereModel, particleMatrix * glm::scale(glm::vec3(0.15)), textureParticle,0);
+
+	}
+
+	// lewe spaliny
+	for (int i = 10; i < 100; i++)
+	{
+		glm::mat4 particleTransformation = glm::translate(glm::vec3(-0.7 + -0.1 * i / 90, -3, -4 * sin(time*i))) * glm::rotate(glm::radians(90.0f), glm::vec3(0, 1, 0)) * glm::scale(glm::vec3(0.15f));
+		glm::mat4 particleMatrix = glm::translate(cameraPos + cameraDir * 0.5f) * glm::mat4_cast(glm::inverse(rotation)) * particleTransformation;
+		drawObject(programColor, &sphereModel, particleMatrix * glm::scale(glm::vec3(0.15)), textureParticle,0);
+
+	}
+
+
 	glutSwapBuffers();
 }
 
@@ -169,6 +187,8 @@ void init()
 
 	textureShip = Core::LoadTexture("textures/ship.png");
 	textureSun = Core::LoadTexture("textures/sun.png");
+
+	textureParticle = Core::LoadTexture("textures/particle.png");
 
 	texturePlanet1 = Core::LoadTexture("textures/planet1.png");
 	texturePlanet2 = Core::LoadTexture("textures/planet2.png");
@@ -194,7 +214,6 @@ void init()
 	}
 
 	cubemapTexture = Core::LoadCubeMap(faces);
-
 }
 
 void shutdown()
