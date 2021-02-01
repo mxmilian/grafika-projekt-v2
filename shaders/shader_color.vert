@@ -14,8 +14,8 @@ out vec2 vertexCoord;
 void main()
 {
 	gl_Position = transformation * vec4(vertexPosition, 1.0);
-	interpNormal = (modelMatrix * vec4(vertexNormal,0)).xyz;
-	fragPos = (modelMatrix * vec4(vertexPosition,1)).xyz;
+	interpNormal = normalize(vec3(modelMatrix * vec4(vertexNormal,0.0)));
+	fragPos = vec3(modelMatrix * vec4(vertexPosition,1.0));
 
-	vertexCoord = -vertexTexCoord;
+	//vertexCoord = -vertexTexCoord;
 }

@@ -90,9 +90,6 @@
     <Image Include="textures\sun.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="textures\ship.png">
-      <Filter>Resource Files</Filter>
-    </Image>
     <Image Include="textures\planet4.png">
       <Filter>Resource Files</Filter>
     </Image>
@@ -109,6 +106,9 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="textures\planet5.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="textures\particle.png">
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="textures\planet1.png">
