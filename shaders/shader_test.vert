@@ -18,13 +18,11 @@ out vec3 TangentViewPos;
 out vec3 TangentFragPos;
 out vec3 interpNormal;
 
-
 void main()
 {
 	fragPos = vec3(modelMatrix * vec4(vertexPosition,1.0));
-	interpTexCoord = vertexTexCoord;
 	interpNormal = normalize(vec3(modelMatrix * vec4(vertexNormal,0.0)));
-
+	interpTexCoord = vertexTexCoord;
 	mat3 normalMatrix=transpose(inverse(mat3(modelMatrix)));
 	
 	vec3 T = normalize(normalMatrix * vertexTangent);

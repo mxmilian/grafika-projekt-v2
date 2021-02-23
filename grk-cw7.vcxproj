@@ -30,6 +30,8 @@
   <ItemGroup>
     <None Include="shaders\shader_color.frag" />
     <None Include="shaders\shader_color.vert" />
+    <None Include="shaders\shader_test.frag" />
+    <None Include="shaders\shader_test.vert" />
     <None Include="shaders\shader_skybox.frag" />
     <None Include="shaders\shader_skybox.vert" />
     <None Include="shaders\shader_sun.frag" />
@@ -50,6 +52,9 @@
     <Image Include="textures\planet2.png" />
     <Image Include="textures\planet2_norm.png" />
     <Image Include="textures\sun.png" />
+    <Image Include="textures\ship.png" />
+    <Image Include="textures\ship_norm.png" />
+    <Image Include="textures\ship2.png" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{1B448102-E76C-4347-BDC7-40D02A567DB6}</ProjectGuid>
