@@ -85,6 +85,12 @@
     <None Include="shaders\shader_skybox.vert">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="shaders\shader_test.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="shaders\shader_test.vert">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="textures\sun.png">
@@ -121,6 +127,15 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="textures\planet2_norm.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="textures\ship.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="textures\ship_norm.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="textures\ship2.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

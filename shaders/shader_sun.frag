@@ -15,7 +15,7 @@ void main()
 	float coef = max(0,dot(view,normal));
 
 	vec3 texture = texture2D(textureSampler, interpTexCoord).rgb;
-	vec3 color =  vec3(1,0.5,0.1);
+	vec3 color =  vec3(1, 0.6, 0);
 
 	gl_FragColor = vec4(mix(texture, color, 1-coef), 1.0);
 }
