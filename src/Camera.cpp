@@ -1,8 +1,8 @@
 #include "Camera.h"
 
-glm::mat4 Core::createPerspectiveMatrix(float zNear, float zFar)
+glm::mat4 Core::createPerspectiveMatrix(float zNear, float zFar, float frustumScale)
 {
-	const float frustumScale = 1.1f;
+	
 	glm::mat4 perspective;
 	perspective[0][0] = frustumScale;
 	perspective[1][1] = frustumScale;

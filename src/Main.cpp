@@ -33,6 +33,8 @@ float prevX = 0;
 float differenceY = 0;
 float prevY = 0;
 
+float frustumScale = 1.f;
+
 glm::mat4 cameraMatrix, perspectiveMatrix;
 glm::quat rotation = glm::quat(1, 0, 0, 0);
 glm::vec3 lightPos = glm::vec3(0, 0, 0);
@@ -128,7 +130,7 @@ void drawObjectSkyBox(GLuint program, GLuint textureId) {
 void renderScene()
 {
 	cameraMatrix = createCameraMatrix();
-	perspectiveMatrix = Core::createPerspectiveMatrix();
+	perspectiveMatrix = Core::createPerspectiveMatrix(0.1, 100, frustumScale);
 	float time = glutGet(GLUT_ELAPSED_TIME) / 1000.f;
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -252,6 +254,13 @@ void idle()
 	glutPostRedisplay();
 }
 
+void onReshape(int width, int height)
+{
+
+	glViewport(0, 0, width, height);
+	frustumScale = (float)width / (float)height;
+}
+
 int main(int argc, char ** argv)
 {
 	glutInit(&argc, argv);
@@ -266,6 +275,7 @@ int main(int argc, char ** argv)
 	glutPassiveMotionFunc(mouse);
 	glutDisplayFunc(renderScene);
 	glutIdleFunc(idle);
+	glutReshapeFunc(onReshape);
 
 	glutMainLoop();
 
