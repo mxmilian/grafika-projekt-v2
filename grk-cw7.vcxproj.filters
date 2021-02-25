@@ -39,6 +39,9 @@
     <ClCompile Include="src\SkyBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Physics.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Camera.h">
@@ -57,6 +60,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\stb_image.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Physics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -83,6 +89,12 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="shaders\shader_skybox.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="shaders\shader_test.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="shaders\shader_test.vert">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
@@ -121,6 +133,15 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="textures\planet2_norm.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="textures\ship.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="textures\ship_norm.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="textures\ship2.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

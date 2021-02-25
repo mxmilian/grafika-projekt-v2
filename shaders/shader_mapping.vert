@@ -8,7 +8,7 @@ layout(location = 4) in vec3 vertexBitangent;
 
 uniform mat4 transformation;
 uniform mat4 modelMatrix;
-uniform vec3 lightPos;
+uniform vec3 sunPos;
 uniform vec3 cameraPos;
 
 out vec3 fragPos;
@@ -16,11 +16,14 @@ out vec2 interpTexCoord;
 out vec3 TangentLightPos;
 out vec3 TangentViewPos;
 out vec3 TangentFragPos;
+out vec3 interpNormal;
+
 
 void main()
 {
 	fragPos = vec3(modelMatrix * vec4(vertexPosition,1.0));
 	interpTexCoord = vertexTexCoord;
+	interpNormal = normalize(vec3(modelMatrix * vec4(vertexNormal,0.0)));
 
 	mat3 normalMatrix=transpose(inverse(mat3(modelMatrix)));
 	
@@ -31,7 +34,7 @@ void main()
 
 	mat3 TBN = transpose(mat3(T, B, N));
 
-	TangentLightPos = TBN * lightPos;
+	TangentLightPos = TBN * sunPos;
 	TangentViewPos  = TBN * cameraPos;
 	TangentFragPos  = TBN * fragPos;
 
